@@ -19,6 +19,7 @@ const childProcessByChat = {};
 
 bot.on('message', (ctx) => {
   const { message } = ctx;
+  console.log('Received message', message);
   if (!message.text || config.nonslash == null && !message.text.startsWith('/')) return;
   if (!config.admins.includes(message.from.username)) return;
 
@@ -35,7 +36,7 @@ bot.on('message', (ctx) => {
 
   const codeReply = (content) => {
     const trimmedContent = String(content).trim();
-    console.log(content);
+    console.log(trimmedContent);
     ctx.reply(trimmedContent.replace(/\n$/, ''), {
       entities: [{ type: 'code', offset: 0, length: trimmedContent.length }],
     });
