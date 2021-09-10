@@ -35,7 +35,7 @@ bot.on('message', (ctx) => {
 
   if (!childProcessByChat[message.chat.id]) {
     codeReply(`Spawning process ${command.split(' ')[0]}`);
-    const child = cp.spawn(command, { stdio: 'pipe' });
+    const child = cp.exec(command, { stdio: 'pipe' });
     process.stdin.pipe(child.stdin);
     child.stdout.on('data', codeReply);
     child.stderr.on('data', codeReply);
