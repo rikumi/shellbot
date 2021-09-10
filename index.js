@@ -23,11 +23,11 @@ bot.on('message', (ctx) => {
   if (!config.admins.includes(message.from.username)) return;
 
   if (!message.text.startsWith('/')) {
-    if (!config.nonslash) return;
+    if (!config.nonslash || !childProcessByChat[message.chat.id]) return;
     if (config.nonslash === true) {
       message.text = '/' + message.text;
     } else {
-      message.text = String(config.nonslash)
+      message.text = '/' + String(config.nonslash)
         .replace(/\$username/g, message.from.username)
         .replace(/\$content/g, message.text);
     }
