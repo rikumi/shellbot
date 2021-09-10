@@ -7,5 +7,6 @@
   },
   "admins": [
     "rikumi"
-  ]
+  ],
+  "nonslash": "echo `$username: $content`"
 }

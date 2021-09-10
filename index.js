@@ -19,8 +19,19 @@ const childProcessByChat = {};
 
 bot.on('message', (ctx) => {
   const { message } = ctx;
-  if (!message.text || !message.text.startsWith('/')) return;
+  if (!message.text || config.nonslash == null && !message.text.startsWith('/')) return;
   if (!config.admins.includes(message.from.username)) return;
+
+  if (!message.text.startsWith('/')) {
+    if (!config.nonslash) return;
+    if (config.nonslash === true) {
+      message.text = '/' + message.text;
+    } else {
+      message.text = String(config.nonslash)
+        .replace(/\$username/g, message.from.username)
+        .replace(/\$content/g, message.text);
+    }
+  }
 
   const codeReply = (content) => {
     const trimmedContent = String(content).trim();
@@ -35,7 +46,7 @@ bot.on('message', (ctx) => {
 
   if (!childProcessByChat[message.chat.id]) {
     codeReply(`Spawning process ${command.split(' ')[0]}`);
-    const child = cp.exec(command, { stdio: 'pipe' });
+    const child = cp.spawn('sh', ['-c', command], { stdio: 'pipe' });
     process.stdin.pipe(child.stdin);
     child.stdout.on('data', codeReply);
     child.stderr.on('data', codeReply);
