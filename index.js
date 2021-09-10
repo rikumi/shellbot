@@ -17,6 +17,11 @@ const bot = new Telegraf(config.telegramBotToken, {
  */
 const childProcessByChat = {};
 
+process.on('SIGINT', () => {
+  bot.stop();
+  Object.values(childProcessByChat).forEach(k => k.kill('SIGINT'));
+});
+
 bot.on('message', (ctx) => {
   const { message } = ctx;
   console.log('Received message', message);
@@ -55,6 +60,8 @@ bot.on('message', (ctx) => {
     child.on('close', (code) => {
       codeReply(`Process ${command.split(' ')[0]} exited with status code ${code}`);
       delete childProcessByChat[message.chat.id];
+      process.stdin.unpipe(child.stdin);
+      process.removeAllListeners('SIGINT');
     });
     childProcessByChat[message.chat.id] = child;
     return;
